@@ -15,7 +15,7 @@ class PointsController {
     } = request.body;
 
     const trx = await knex.transaction();
-    
+
     const point = {
       image: "",
       name,
@@ -28,7 +28,7 @@ class PointsController {
     };
 
     const insertedId = await trx("points").insert(point).returning("id");
-    
+
     const point_id = insertedId[0];
 
     const pointItems = items.map((item_id: number) => {
@@ -70,9 +70,10 @@ class PointsController {
     const parsedItems = String(items)
       .split(",")
       .map((item) => Number(item.trim()));
+
     const points = await knex("points")
       .join("point_items", "points.id", "=", "point_items.point_id")
-      .whereIn("point_items.item.id", parsedItems)
+      .whereIn("point_items.item_id", parsedItems)
       .where("city", String(city))
       .where("uf", String(uf))
       .distinct()
