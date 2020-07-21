@@ -74,10 +74,14 @@ class PointsController {
 
   async index(request: Request, response: Response) {
     const { city, uf, items } = request.query;
-
-    const parsedItems = String(items)
-      .split(",")
-      .map((item) => Number(item.trim()));
+    let parsedItems;
+    if (typeof items !== "undefined") {
+      parsedItems = String(items)
+        .split(",")
+        .map((item) => Number(item.trim()));
+    } else {
+      parsedItems = [1, 2, 3, 4, 5, 6];
+    }
 
     const points = await knex("points")
       .join("point_items", "points.id", "=", "point_items.point_id")
@@ -90,7 +94,7 @@ class PointsController {
     const serializedPoints = points.map((point) => {
       return {
         ...point,
-        image_url: `http://192.168.0.7:3333/uploads${point.image}`,
+        image_url: `http://192.168.0.7:3333/uploads/${point.image}`,
       };
     });
 
